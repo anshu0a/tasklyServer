@@ -16,9 +16,8 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 
 const allowedOrigins = [
-   process.env.FRONT_END || "https://taskly-6k7xx162k-anshus-projects-270ebc69.vercel.app",
-  "http://localhost:5173",
- 
+  "http://localhost:5173", 
+  process.env.FRONT_END || "https://taskly-6k7xx162k-anshus-projects-270ebc69.vercel.app",
 ];
 
 app.use(cors({
@@ -31,9 +30,18 @@ app.use(cors({
       callback(new Error("CORS not allowed from this origin"));
     }
   },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 }));
 
+
+app.options("*", cors({
+  origin: allowedOrigins,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
