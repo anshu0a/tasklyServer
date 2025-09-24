@@ -16,24 +16,23 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 
 const allowedOrigins = [
-   process.env.FRONT_END || `https://taskly-three-sage.vercel.app`,
   "http://localhost:5173",
- 
+  "https://taskly-three-sage.vercel.app",
+  "https://taskly-git-main-anshus-projects-270ebc69.vercel.app",
+  "https://taskly-rjsox8typ-anshus-projects-270ebc69.vercel.app"
 ];
 
-
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("CORS not allowed from this origin"));
-    }
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); // allow curl, mobile apps, etc.
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    console.log("Blocked CORS request from:", origin);
+    callback(new Error("CORS not allowed from this origin"));
   },
-  credentials: true, // allow cookies
+  credentials: true,
+  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
+  allowedHeaders: ["Content-Type","Authorization"]
 }));
-
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
