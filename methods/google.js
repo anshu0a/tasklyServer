@@ -1,8 +1,10 @@
 const jwt = require("jsonwebtoken");
-const fromtendLink = "http://localhost:5173"; // replace with your frontend origin
 
+const frontendLink = (process.env.NODE_ENV === "production" 
+  ? process.env.FRONT_END 
+  : "http://localhost:5173"
+).replace(/\/$/, "");
 
-// Google Callback
 exports.googleCallback = (req, res) => {
   try {
     if (!req.user) {
@@ -17,24 +19,23 @@ exports.googleCallback = (req, res) => {
         email: req.user.email,
         photo: req.user.photo,
         googleId: req.user.googleId,
-        provider: req.user.provider
+        provider: req.user.provider,
       },
       process.env.JWT_SECRET,
       { expiresIn: "30d" }
     );
 
-    // Send token to frontend via popup
     res.send(`
       <html>
         <body>
           <script>
             try {
               window.opener.postMessage(
-                { token: "${token}", message: "Login successful" },
-                '${fromtendLink}'
+                { token: ${JSON.stringify(token)}, message: "Login successful" },
+                "${frontendLink}"
               );
               window.close();
-            } catch(e) {
+            } catch (e) {
               console.error(e);
               document.body.innerHTML = "<p>Login successful! Please close this window.</p>";
             }
@@ -49,7 +50,6 @@ exports.googleCallback = (req, res) => {
   }
 };
 
-// Return Google auth URL
 exports.googleUrl = (req, res) => {
   try {
     const googleLoginUrl = "/api/auth/google";
@@ -60,7 +60,6 @@ exports.googleUrl = (req, res) => {
   }
 };
 
-// Login fail handler
 exports.loginfail = (req, res) => {
   console.log("Redirect to login again");
   res.status(401).json({ error: true, message: "Login failed" });
