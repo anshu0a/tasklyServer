@@ -1,6 +1,9 @@
 const jwt = require("jsonwebtoken");
-const fromtendLink = "http://localhost:5173"; // replace with your frontend origin
+require("dotenv").config();
 
+const fromtendLink =  process.env.NODE_ENV === "production"   ?
+ process.env.FRONT_END || "https://taskly-three-sage.vercel.app"  :
+  "http://localhost:5173";
 
 // Google Callback
 exports.googleCallback = (req, res) => {
