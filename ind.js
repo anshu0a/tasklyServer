@@ -16,7 +16,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 
 const allowedOrigins = [
-   process.env.FRONT_END || "https://taskly-6k7xx162k-anshus-projects-270ebc69.vercel.app",
+   process.env.FRONT_END || `https://taskly-three-sage.vercel.app`,
   "http://localhost:5173",
  
 ];
