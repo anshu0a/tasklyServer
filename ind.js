@@ -16,9 +16,21 @@ const upload = multer({ storage: multer.memoryStorage() });
 //  https://attaskly.netlify.app
 //  http://localhost:5173
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.FRONT_END,
+];
+
 app.use(cors({
-  origin: process.env.FRONT_END,
-  credentials: true,
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS not allowed from this origin"));
+    }
+  },
+  credentials: true, // allow cookies
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
