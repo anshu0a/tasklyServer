@@ -15,9 +15,9 @@ const upload = multer({ storage: multer.memoryStorage() });
 //------------------------------------------------------------ Middleware
 //  https://attaskly.netlify.app
 //  http://localhost:5173
-const fromtendLink = 'https://attaskly.netlify.app'
+
 app.use(cors({
-  origin: fromtendLink,
+  origin: process.env.FRONT_END,
   credentials: true,
 }));
 app.use(express.json());
