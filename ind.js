@@ -13,25 +13,28 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 
 //------------------------------------------------------------ Middleware
-//  https://attaskly.netlify.app
-//  http://localhost:5173
+
 
 const allowedOrigins = [
+   process.env.FRONT_END || "https://taskly-6k7xx162k-anshus-projects-270ebc69.vercel.app",
   "http://localhost:5173",
-  process.env.FRONT_END,
+ 
 ];
 
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); 
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.log("Blocked CORS request from:", origin);
       callback(new Error("CORS not allowed from this origin"));
     }
   },
-  credentials: true, // allow cookies
+  credentials: true,
 }));
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(session({
