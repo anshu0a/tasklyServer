@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
-const frontendLink = (process.env.NODE_ENV === "production" 
-  ? process.env.FRONT_END 
+const frontendLink = (process.env.NODE_ENV === "production"
+  ? process.env.FRONT_END
   : "http://localhost:5173"
 ).replace(/\/$/, "");
 
@@ -32,7 +32,7 @@ exports.googleCallback = (req, res) => {
             try {
               window.opener.postMessage(
                 { token: ${JSON.stringify(token)}, message: "Login successful" },
-                "${frontendLink}"
+                "${new URL(frontendLink).origin}"
               );
               window.close();
             } catch (e) {
