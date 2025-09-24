@@ -2,7 +2,7 @@ const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
-const isProd = process.env.NODE_ENV === "production";
+require("dotenv").config();
 
 module.exports = function (passport) {
   // ======================
@@ -32,9 +32,7 @@ module.exports = function (passport) {
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: isProd
-          ? "https://tasklyserver-0ux1.onrender.com/api/auth/google/callback"
-          : "http://localhost:3000/api/auth/google/callback",
+        callbackURL: `${process.env.FRONT_END}/api/auth/google/callback`
       },
       async (accessToken, refreshToken, profile, done) => {
         try {

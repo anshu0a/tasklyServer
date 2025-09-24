@@ -1,9 +1,6 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const fromtendLink =  process.env.NODE_ENV === "production"   ?
- process.env.FRONT_END || "https://taskly-three-sage.vercel.app"  :
-  "http://localhost:5173";
 
 // Google Callback
 exports.googleCallback = (req, res) => {
@@ -34,7 +31,7 @@ exports.googleCallback = (req, res) => {
             try {
               window.opener.postMessage(
                 { token: "${token}", message: "Login successful" },
-                '${fromtendLink}'
+                '${process.env.FRONT_END}'
               );
               window.close();
             } catch(e) {
