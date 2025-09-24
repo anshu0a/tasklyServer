@@ -14,34 +14,28 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 //------------------------------------------------------------ Middleware
 
-
 const allowedOrigins = [
-  "http://localhost:5173", 
+  "http://localhost:5173",
   process.env.FRONT_END || "https://taskly-6k7xx162k-anshus-projects-270ebc69.vercel.app",
 ];
 
+
 app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true); 
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
     if (allowedOrigins.includes(origin)) {
-      callback(null, true);
+      return callback(null, true);
     } else {
       console.log("Blocked CORS request from:", origin);
-      callback(new Error("CORS not allowed from this origin"));
+      return callback(new Error("CORS not allowed"));
     }
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
+  credentials: true, 
 }));
 
-
-app.options("*", cors({
-  origin: allowedOrigins,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -50,7 +44,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
 }));
-app.use(passport.initialize()); 
+app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -59,11 +53,11 @@ const isLogin = require('./middle/loginCheck');
 //------------------------------------------------------------------models
 
 const User = require("./models/User");
-const Task = require("./models/Task"); 
+const Task = require("./models/Task");
 
 //-----------------------------------------------------------------methods
 
-const { loginOneuser } = require("./methods/login.js"); 
+const { loginOneuser } = require("./methods/login.js");
 const { registerOneUser } = require("./methods/create.js");
 const { userExist } = require("./methods/helper.js");
 const { googleCallback, googleUrl, loginfail } = require("./methods/google.js");
