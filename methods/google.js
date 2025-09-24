@@ -26,24 +26,27 @@ exports.googleCallback = (req, res) => {
     );
 
     res.send(`
-      <html>
-        <body>
-          <script>
-            try {
-              window.opener.postMessage(
-                { token: ${JSON.stringify(token)}, message: "Login successful" },
-                "${new URL(frontendLink).origin}"
-              );
-              window.close();
-            } catch (e) {
-              console.error(e);
-              document.body.innerHTML = "<p>Login successful! Please close this window.</p>";
-            }
-          </script>
-          <p>Login successful! You can close this window.</p>
-        </body>
-      </html>
-    `);
+  <html>
+    <body>
+      <script>
+        console.log("About to postMessage to opener:", "${new URL(frontendLink).origin}");
+        try {
+          window.opener.postMessage(
+            { token: ${JSON.stringify(token)}, message: "Login successful" },
+            "${new URL(frontendLink).origin}"
+          );
+          console.log("✅ postMessage sent");
+          window.close();
+        } catch (e) {
+          console.error("❌ postMessage error", e);
+          document.body.innerHTML = "<p>Login successful! Please close this window.</p>";
+        }
+      </script>
+      <p>Login successful! You can close this window.</p>
+    </body>
+  </html>
+`);
+
   } catch (err) {
     console.error("Google callback error:", err);
     res.status(500).json({ error: true, message: "Server error during Google login" });
