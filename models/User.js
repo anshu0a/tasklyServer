@@ -54,7 +54,7 @@ const UserSchema = new mongoose.Schema({
   bio: { type: String, default: biio },
   name: { type: String },
   profession: { type: String, default: "Tasklers" },
-  photo: { type: String,default: profiles[Math.floor(Math.random() * profiles.length)] },
+  photo: { type: String, default: profiles[Math.floor(Math.random() * profiles.length)] },
   cover: { type: String, default: covers[Math.floor(Math.random() * covers.length)] },
   email: { type: String },
   googleId: { type: String, unique: true, sparse: true },
@@ -68,12 +68,14 @@ const UserSchema = new mongoose.Schema({
       close: { type: Boolean, default: false }
     }
   ],
-  links: [{
-    addedAt: { type: Date, default: Date.now },
-    goto: String,
-    title: String,
-    type: String,
-  }],
+  links: [
+    {
+      addedAt: { type: Date, default: Date.now },
+      goto: { type: String },
+      title: { type: String },
+      type: { type: String },
+    }
+  ],
   tasks: [
     {
       _id: { type: mongoose.Schema.Types.ObjectId, ref: "Task" },

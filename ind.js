@@ -23,15 +23,15 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: function(origin, callback) {
+  origin: function (origin, callback) {
     if (!origin) return callback(null, true); // allow curl, mobile apps, etc.
     if (allowedOrigins.includes(origin)) return callback(null, true);
     console.log("Blocked CORS request from:", origin);
     callback(new Error("CORS not allowed from this origin"));
   },
   credentials: true,
-  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
-  allowedHeaders: ["Content-Type","Authorization"]
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 app.use(express.json());
@@ -41,7 +41,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
 }));
-app.use(passport.initialize()); 
+app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -50,17 +50,17 @@ const isLogin = require('./middle/loginCheck');
 //------------------------------------------------------------------models
 
 const User = require("./models/User");
-const Task = require("./models/Task"); 
+const Task = require("./models/Task");
 
 //-----------------------------------------------------------------methods
 
-const { loginOneuser, getUsername } = require("./methods/login.js"); 
+const { loginOneuser, getUsername } = require("./methods/login.js");
 const { registerOneUser } = require("./methods/create.js");
 const { userExist } = require("./methods/helper.js");
 const { googleCallback, googleUrl, loginfail } = require("./methods/google.js");
 const { addTask, istaskName, getmydata, getOtherTasks, pullPushTask, getOneTask, markDone, addOneMinute, killTask } = require("./methods/task.js");
 const { addComment, removeComment } = require("./methods/comments.js");
-const { getProfileInfo } = require("./methods/Profile.js");
+const { getProfileInfo, addOneLink, removeLink } = require("./methods/Profile.js");
 
 //------------------------------------------------------------- MongoDB connect
 
@@ -112,7 +112,10 @@ app.post("/api/addOneMinut/:taskId", isLogin, addOneMinute);
 app.post("/api/killTask/:taskId", isLogin, killTask);
 // ___________________________________________________________________ get profile details __________________________________
 app.get("/api/getProfileInfo/:person", isLogin, getProfileInfo);
-
+// ___________________________________________________________________ Add one Link __________________________________
+app.post("/api/addLink", isLogin, addOneLink);
+// ___________________________________________________________________ remove one Link __________________________________
+app.post("/api/removeLink/:id", isLogin, removeLink);
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Logout
