@@ -31,7 +31,6 @@ exports.addTask = async (req, res) => {
     // timeline
     let days = parseInt(req.body.timeLine, 10);
     if (!days || days <= 0) days = 1;
-
     // create task object
     const newTaskData = {
       owner: req.user.id,

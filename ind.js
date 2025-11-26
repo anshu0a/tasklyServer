@@ -54,12 +54,13 @@ const Task = require("./models/Task");
 
 //-----------------------------------------------------------------methods
 
-const { loginOneuser } = require("./methods/login.js"); 
+const { loginOneuser, getUsername } = require("./methods/login.js"); 
 const { registerOneUser } = require("./methods/create.js");
 const { userExist } = require("./methods/helper.js");
 const { googleCallback, googleUrl, loginfail } = require("./methods/google.js");
 const { addTask, istaskName, getmydata, getOtherTasks, pullPushTask, getOneTask, markDone, addOneMinute, killTask } = require("./methods/task.js");
 const { addComment, removeComment } = require("./methods/comments.js");
+const { getProfileInfo } = require("./methods/Profile.js");
 
 //------------------------------------------------------------- MongoDB connect
 
@@ -80,7 +81,9 @@ app.post("/api/registerUser", registerOneUser);
 app.post("/api/login", loginOneuser);
 // ___________________________________________________________________user exist __________________________________
 app.post("/api/isuserexist", userExist);
-// _________________________________________________________________giving home data________________________________
+// ___________________________________________________________________get username ________________________________
+app.get("/api/getUsername", isLogin, getUsername);
+// _________________________________________________________________giving home data_______________________________
 app.get("/api/getHomeData", isLogin, (req, res) => {
   // console.log(req.user)
   res.send({ success: true, message: "Hello from backend ...[][][]", user: req.user.username });
@@ -101,12 +104,16 @@ app.get("/api/getOneTask/:taskId/:search", isLogin, getOneTask);
 app.post("/api/addCmt/:search", isLogin, addComment);
 // ___________________________________________________________________ remove comments __________________________________
 app.post("/api/removeCmt/:userId/:taskId/:msgId/:search", isLogin, removeComment);
-
+// ___________________________________________________________________ done my task __________________________________
 app.post("/api/markToggle/:taskId/:search", isLogin, markDone);
-
+// ___________________________________________________________________ add one minut from timer in task __________________________________
 app.post("/api/addOneMinut/:taskId", isLogin, addOneMinute);
-
+// ___________________________________________________________________ delete certain task __________________________________
 app.post("/api/killTask/:taskId", isLogin, killTask);
+// ___________________________________________________________________ get profile details __________________________________
+app.get("/api/getProfileInfo/:person", isLogin, getProfileInfo);
+
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Logout
 app.post("/logout", (req, res) => {

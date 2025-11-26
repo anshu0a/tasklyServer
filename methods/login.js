@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
-exports.loginOneuser =  async (req, res) => {
+exports.loginOneuser = async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
@@ -17,11 +17,11 @@ exports.loginOneuser =  async (req, res) => {
       { expiresIn: "30d" }
     );
 
-    res.send({ error: false, token });
+    res.send({ error: false, token});
 
   } catch (err) {
     res.send({ error: true, message: 'Server side error' })
-    console.log("ERROR WHILE LOGIN : ",err)
+    console.log("ERROR WHILE LOGIN : ", err)
   }
 }
 exports.userExist = async (req, res) => {
@@ -38,6 +38,19 @@ exports.userExist = async (req, res) => {
     } else {
       return res.json({ error: false, exists: false, username: name });
     }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: true, message: "Server side error" });
+  }
+}
+
+exports.getUsername = async (req,res) => {
+  try {
+    if(!req.user){
+      res.status(500).json({ error: true, message: "User not found" });
+    }
+    res.send({ error: false, userData: { username: req.user.username, id: req.user.id,name : req.user?.name?.split(" ")[0]} });
+
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: true, message: "Server side error" });
