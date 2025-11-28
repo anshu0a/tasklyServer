@@ -51,6 +51,7 @@ const isLogin = require('./middle/loginCheck');
 
 const User = require("./models/User");
 const Task = require("./models/Task");
+const Frnd = require("./models/Frnd");
 
 //-----------------------------------------------------------------methods
 
@@ -60,7 +61,7 @@ const { userExist } = require("./methods/helper.js");
 const { googleCallback, googleUrl, loginfail } = require("./methods/google.js");
 const { addTask, istaskName, getmydata, getOtherTasks, pullPushTask, getOneTask, markDone, addOneMinute, killTask } = require("./methods/task.js");
 const { addComment, removeComment } = require("./methods/comments.js");
-const { getProfileInfo, addOneLink, removeLink } = require("./methods/Profile.js");
+const { getProfileInfo, addOneLink, removeLink, frndReq } = require("./methods/Profile.js");
 
 //------------------------------------------------------------- MongoDB connect
 
@@ -116,6 +117,8 @@ app.get("/api/getProfileInfo/:person", isLogin, getProfileInfo);
 app.post("/api/addLink", isLogin, addOneLink);
 // ___________________________________________________________________ remove one Link __________________________________
 app.post("/api/removeLink/:id", isLogin, removeLink);
+// ___________________________________________________________________ frnd request __________________________________
+app.get("/api/frndRequest/:frndId", isLogin,frndReq);
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Logout
