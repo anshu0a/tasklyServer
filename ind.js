@@ -8,11 +8,12 @@ const path = require("path")
 require("./config/passport")(passport);
 const app = express();
 const multer = require("multer");
+const cron = require("node-cron");
 const upload = multer({ storage: multer.memoryStorage() });
 
 
 
-//------------------------------------------------------------ Middleware
+//------------------------------------------------------------ Middleware -----------
 
 
 const allowedOrigins = [
@@ -63,12 +64,24 @@ const { addTask, istaskName, getmydata, getOtherTasks, pullPushTask, getOneTask,
 const { addComment, removeComment } = require("./methods/comments.js");
 const { getProfileInfo, addOneLink, removeLink, frndReq, getMyfrnd } = require("./methods/Profile.js");
 const { addOneDare, getMyChallenges, getOtherChallenges, oneDare, grabDare, deleteDare, markDare, updateStreek } = require("./methods/dare.js");
+const { deleteExpiredDares, deleteExpiredTasks } = require("./methods/cleanup.js");
 
 //------------------------------------------------------------- MongoDB connect
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB connected"))
   .catch(err => console.error("❌ MongoDB connection error:", err));
+
+//------------------------------------------------------------- Auto delete
+cron.schedule("0 * * * *", async () => {
+  try {
+    await deleteExpiredTasks();
+    await deleteExpiredDares();
+  } catch (err) {
+    console.error("❌ Hourly cron error:", err.message);
+  }
+});
+
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++( Routes )+++++++++++++++++++++++++++++++++++++
 
@@ -87,7 +100,6 @@ app.post("/api/isuserexist", userExist);
 app.get("/api/getUsername", isLogin, getUsername);
 // _________________________________________________________________giving home data_______________________________
 app.get("/api/getHomeData", isLogin, (req, res) => {
-  // console.log(req.user)
   res.send({ success: true, message: "Hello from backend ...[][][]", user: req.user.username });
 })
 // ___________________________________________________________________add task  __________________________________

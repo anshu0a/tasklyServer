@@ -222,11 +222,11 @@ exports.oneDare = async (req, res) => {
         )
             .populate("admin", "_id username name photo cover")
             .populate("collab._id", "_id username name photo");
-
+     
         if (type === "public") {
 
             if (!mydare) {
-                return res.send({ error: true,found: false,  msg: "Dare not found" });
+                return res.send({ error: true, found: false, msg: "Dare not found" });
             }
 
             return res.send({ error: false, dare: mydare });
@@ -250,7 +250,7 @@ exports.oneDare = async (req, res) => {
         );
 
         if (!dare) {
-            return res.send({ error: true,found: false,  msg: "Dare not found in user challenges" });
+            return res.send({ error: true, found: false, msg: "Dare not found in user challenges" });
         }
 
         const now = new Date();
