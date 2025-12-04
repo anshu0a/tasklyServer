@@ -60,7 +60,6 @@ const UserSchema = new mongoose.Schema({
   merit: { type: Number, default: 100 },
   mobile: { type: Number },
   birth: { type: Date },
-  streek: { type: Number, default: 0 },
 
   links: [
     {

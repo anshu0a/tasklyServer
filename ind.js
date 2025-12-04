@@ -73,7 +73,7 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.error("❌ MongoDB connection error:", err));
 
 //------------------------------------------------------------- Auto delete
-cron.schedule("* * * * *", async () => {
+cron.schedule("0 * * * *", async () => {
   try {
     await deleteExpiredDares();
     await deleteExpiredTasks();
