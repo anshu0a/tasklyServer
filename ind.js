@@ -156,7 +156,7 @@ app.post("/api/updateStreek/:dareId/", isLogin, updateStreek);
 // Logout
 app.post("/logout", (req, res) => {
   // if using cookies
-  res.clearCookie("token");
+  res.clearCookie("");
   res.json({ success: true, message: "Logged out" });
 });
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -4,26 +4,31 @@ const jwt = require("jsonwebtoken");
 exports.loginOneuser = async (req, res) => {
   try {
     const { username, password } = req.body;
+
     const user = await User.findOne({ username });
-    if (!user) return res.send({ error: true, message: "User not found" });
+    if (!user) 
+      return res.send({ error: true, message: "User not found" });
 
     const isMatch = await user.isValidPassword(password);
-    if (!isMatch) return res.send({ error: true, message: "Incorrect password" });
+    if (!isMatch) 
+      return res.send({ error: true, message: "Incorrect password" });
 
-
+ 
     const token = jwt.sign(
-      { id: user._id, username: user.username },
+      { id: user._id, username: user.username, photo: user.photo || "login" },
       process.env.JWT_SECRET,
       { expiresIn: "30d" }
     );
 
-    res.send({ error: false, token});
+    res.send({ error: false, token });
 
   } catch (err) {
-    res.send({ error: true, message: 'Server side error' })
-    console.log("ERROR WHILE LOGIN : ", err)
+    console.error("ERROR WHILE LOGIN:", err);
+    res.send({ error: true, message: 'Server side error' });
   }
-}
+};
+
+
 exports.userExist = async (req, res) => {
   const { name } = req.body;
   if (!name) {
