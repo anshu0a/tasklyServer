@@ -24,8 +24,6 @@ const profiles = [
   "https://res.cloudinary.com/denrzaquu/image/upload/v1764150568/19_m0zx5l.svg",
   "https://res.cloudinary.com/denrzaquu/image/upload/v1764150568/14_gdndhg.svg",
   "https://res.cloudinary.com/denrzaquu/image/upload/v1764150410/sea-1-svgrepo-com_ms5fbf.svg",
-  "https://res.cloudinary.com/denrzaquu/image/upload/v1764150401/architecture-building-busy-svgrepo-com_ox1ezl.svg",
-  "https://res.cloudinary.com/denrzaquu/image/upload/v1764150399/environment-fall-forest-svgrepo-com_ihkqhg.svg",
 
   "https://res.cloudinary.com/denrzaquu/image/upload/v1764150398/hanger-svgrepo-com_hbermy.svg",
   "https://res.cloudinary.com/denrzaquu/image/upload/v1764150398/balloons-svgrepo-com_huyjqp.svg",
@@ -54,20 +52,16 @@ const UserSchema = new mongoose.Schema({
   bio: { type: String, default: biio },
   name: { type: String },
   profession: { type: String, default: "Tasklers" },
-  photo: { type: String, default: profiles[Math.floor(Math.random() * profiles.length)] },
-  cover: { type: String, default: covers[Math.floor(Math.random() * covers.length)] },
+  photo: { type: String, default: () => profiles[Math.floor(Math.random() * profiles.length)] },
+  cover: { type: String, default: () => covers[Math.floor(Math.random() * covers.length)] },
   email: { type: String },
   googleId: { type: String, unique: true, sparse: true },
   provider: { type: String },
+  merit: { type: Number, default: 100 },
   mobile: { type: Number },
   birth: { type: Date },
   streek: { type: Number, default: 0 },
-  friends: [
-    {
-      _id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-      close: { type: Boolean, default: false }
-    }
-  ],
+
   links: [
     {
       addedAt: { type: Date, default: Date.now },
@@ -94,10 +88,20 @@ const UserSchema = new mongoose.Schema({
 
   challenges: [
     {
-      _id: { type: mongoose.Schema.Types.ObjectId, ref: "Task" },
+      dare: { type: mongoose.Schema.Types.ObjectId, ref: "Dare" },
       addedAt: { type: Date, default: Date.now },
-    }
-  ],
+      progress: { type: Number, default: 0 },
+      streek: { type: Number, default: 0 },
+      lastDone: { type: Date, default: () => new Date(Date.now() - 24 * 60 * 60 * 1000) },
+      by: { type: String, default: 'm' },
+      allDares: [
+        {
+          one: { type: String, required: true },
+          isDone: { type: Boolean, default: false }
+        }
+      ],
+    },
+  ]
 });
 
 // Hash password before saving (only if password exists)

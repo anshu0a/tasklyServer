@@ -61,7 +61,8 @@ const { userExist } = require("./methods/helper.js");
 const { googleCallback, googleUrl, loginfail } = require("./methods/google.js");
 const { addTask, istaskName, getmydata, getOtherTasks, pullPushTask, getOneTask, markDone, addOneMinute, killTask } = require("./methods/task.js");
 const { addComment, removeComment } = require("./methods/comments.js");
-const { getProfileInfo, addOneLink, removeLink, frndReq } = require("./methods/Profile.js");
+const { getProfileInfo, addOneLink, removeLink, frndReq, getMyfrnd } = require("./methods/Profile.js");
+const { addOneDare, getMyChallenges, getOtherChallenges, oneDare, grabDare, deleteDare, markDare, updateStreek } = require("./methods/dare.js");
 
 //------------------------------------------------------------- MongoDB connect
 
@@ -91,8 +92,8 @@ app.get("/api/getHomeData", isLogin, (req, res) => {
 })
 // ___________________________________________________________________add task  __________________________________
 app.post("/api/tasks", isLogin, upload.fields([{ name: "voice", maxCount: 1 }, { name: "images" }]), addTask);
-// ___________________________________________________________________task exist or not  __________________________________
-app.post("/api/isTaskExist", isLogin, istaskName);
+// ___________________________________________________________________task and dare exist or not  __________________________________
+app.post("/api/isExist/:type", isLogin, istaskName);
 // ___________________________________________________________________ fetch my all tasks __________________________________
 app.get("/api/myAllTasks", isLogin, getmydata);
 // ___________________________________________________________________ fetch global all tasks __________________________________
@@ -118,7 +119,26 @@ app.post("/api/addLink", isLogin, addOneLink);
 // ___________________________________________________________________ remove one Link __________________________________
 app.post("/api/removeLink/:id", isLogin, removeLink);
 // ___________________________________________________________________ frnd request __________________________________
-app.get("/api/frndRequest/:frndId", isLogin,frndReq);
+app.get("/api/frndRequest/:frndId", isLogin, frndReq);
+// ___________________________________________________________________ frnd request __________________________________
+app.get("/api/getMyFrnd", isLogin, getMyfrnd);
+// ___________________________________________________________________ add one dare __________________________________
+app.post("/api/addOneDare", isLogin, upload.fields([{ name: "voice", maxCount: 1 }, { name: "images" }]), addOneDare);
+// ___________________________________________________________________get my dare __________________________________
+app.get("/api/myAllDares", isLogin, getMyChallenges);
+// ___________________________________________________________________ get all public dare __________________________________
+app.get("/api/otherAllDares", isLogin, getOtherChallenges);
+// ___________________________________________________________________ get one dare __________________________________
+app.get("/api/oneDare/:dareId/:type", isLogin, oneDare);
+// ___________________________________________________________________ grab dare __________________________________
+app.post("/api/grabDare/:dareId", isLogin, grabDare);
+// ___________________________________________________________________ delete grab __________________________________
+app.post("/api/deleteDare/:dareId/:type", isLogin, deleteDare);
+// ___________________________________________________________________ mark dare __________________________________
+app.post("/api/markDare/:dareId/:oneId/:work", isLogin, markDare);
+// ___________________________________________________________________ update streek __________________________________
+app.post("/api/updateStreek/:dareId/", isLogin, updateStreek);
+
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Logout

@@ -62,6 +62,7 @@ exports.getProfileInfo = async (req, res) => {
             bio: person.bio,
             pic: person.photo,
             cover: person.cover,
+            merit: person.merit,
 
 
         })
@@ -142,51 +143,81 @@ exports.removeLink = async (req, res) => {
     }
 }
 
-exports.frndReq =  async (req, res) => {
-  const { frndId } = req.params;
+exports.frndReq = async (req, res) => {
+    const { frndId } = req.params;
 
-  try {
-    const frnd = await Frnd.findOne({
-      $or: [
-        { frnd1: req.user.id, frnd2: frndId },
-        { frnd1: frndId, frnd2: req.user.id }
-      ]
-    });
+    try {
+        const frnd = await Frnd.findOne({
+            $or: [
+                { frnd1: req.user.id, frnd2: frndId },
+                { frnd1: frndId, frnd2: req.user.id }
+            ]
+        });
 
-    if (!frnd) {
-      await Frnd.create({
-        frnd1: req.user.id,
-        frnd2: frndId,
-        status: "pending",
-      });
-      return res.send({ error: false, info: "Pending", msg: "Request Sended." });
-    } else {
-      if (frnd.frnd1 == req.user.id) {
-        if (frnd.status == "accepted") {
-          await Frnd.deleteOne({ frnd1: req.user.id, frnd2: frndId });
-          return res.send({ error: false, info: "+ Friend", msg: "Unfriend." });
+        if (!frnd) {
+            await Frnd.create({
+                frnd1: req.user.id,
+                frnd2: frndId,
+                status: "pending",
+            });
+            return res.send({ error: false, info: "Pending", msg: "Request Sended." });
         } else {
-          await Frnd.deleteOne({ frnd1: req.user.id, frnd2: frndId });
-          return res.send({ error: false, info: "+ Friend", msg: "Request withdraw." });
-        }
+            if (frnd.frnd1 == req.user.id) {
+                if (frnd.status == "accepted") {
+                    await Frnd.deleteOne({ frnd1: req.user.id, frnd2: frndId });
+                    return res.send({ error: false, info: "+ Friend", msg: "Unfriend." });
+                } else {
+                    await Frnd.deleteOne({ frnd1: req.user.id, frnd2: frndId });
+                    return res.send({ error: false, info: "+ Friend", msg: "Request withdraw." });
+                }
 
-      } else {
-        if (frnd.status == "accepted") {
-          await Frnd.deleteOne({ frnd2: req.user.id, frnd1: frndId });
-          console.log("unfriend");
-          return res.send({ error: false, info: "+ Friend", msg: "Unfriend." });
-        } else {
-          frnd.status = "accepted";
-          frnd.save();
-          return res.send({ error: false, info: "Remove", msg: "Request accepeted." });
+            } else {
+                if (frnd.status == "accepted") {
+                    await Frnd.deleteOne({ frnd2: req.user.id, frnd1: frndId });
+                    console.log("unfriend");
+                    return res.send({ error: false, info: "+ Friend", msg: "Unfriend." });
+                } else {
+                    frnd.status = "accepted";
+                    frnd.save();
+                    return res.send({ error: false, info: "Remove", msg: "Request accepeted." });
+                }
+            }
         }
-      }
+    } catch (er) {
+        console.log("error in frnd req : ", er);
+        return res.send({ error: true, msg: "Server side error." })
     }
-  } catch (er) {
-    console.log("error in frnd req : ", er);
-    return res.send({ error: true, msg: "Server side error." })
-  }
+}
 
+exports.getMyfrnd = async (req, res) => {
+    try {
+        let friends = await Frnd.find({
+            $or: [
+                { frnd1: req.user.id, status: "accepted" },
+                { frnd2: req.user.id, status: "accepted" }
+            ]
+        })
+            .populate("frnd1")
+            .populate("frnd2");
 
+        // Convert to only actual friend user
+        friends = friends.map(one => {
+            const isFrnd1 = one.frnd1._id.toString() === req.user.id;
 
+            const other = isFrnd1 ? one.frnd2 : one.frnd1;
+
+            return {
+                id: other._id,
+                pic: other.photo,
+                username: other.username,
+                name: other.name
+            };
+        });
+
+        return res.send({ error: false, friends, msg: "All friends list" });
+
+    } catch (er) {
+        console.log("error in frnd req : ", er);
+        return res.send({ error: true, msg: "Server side error." })
+    }
 }

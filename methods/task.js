@@ -63,6 +63,7 @@ exports.addTask = async (req, res) => {
 
 
 exports.istaskName = async (req, res) => {
+  const { type } = req.params;
   try {
     const userId = req.user.id;
     const { title } = req.body;
@@ -71,10 +72,15 @@ exports.istaskName = async (req, res) => {
 
     const user = await User.findById(userId);
     if (!user) return res.send({ error: true, message: "User not found" });
-
-    const taskIds = user.tasks.map(t => t._id);
-    const exists = await Task.exists({ _id: { $in: taskIds }, title });
-
+    let taskIds;
+    let exists;
+    if (type == 'task') {
+      taskIds = user.tasks.map(t => t._id);
+      exists = await Task.exists({ _id: { $in: taskIds }, title });
+    } else {
+      taskIds = user.challenges.map(t => t._id);
+      exists = await Task.exists({ _id: { $in: taskIds }, title });
+    }
     res.send({ error: false, exists: !!exists });
   } catch (err) {
     console.error(err);
@@ -232,7 +238,7 @@ exports.getOneTask = async (req, res) => {
     const { taskId, search } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(taskId)) {
-      return res.status(400).json({ error: true, message: "Invalid Task ID" });
+      return res.send({ error: true, message: "Invalid Task ID" });
     }
 
     const task = await Task.findById(taskId).populate("owner", "username name photo _id");
