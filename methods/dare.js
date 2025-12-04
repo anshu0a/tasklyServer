@@ -222,7 +222,7 @@ exports.oneDare = async (req, res) => {
         )
             .populate("admin", "_id username name photo cover")
             .populate("collab._id", "_id username name photo");
-     
+
         if (type === "public") {
 
             if (!mydare) {
@@ -486,10 +486,9 @@ exports.updateStreek = async (req, res) => {
             return res.send({ error: true, message: "Dare allready completed for today." });
         }
         dare.streek += 1;
-        if ((dare.streek + 1) % 3 === 0) {
-            user.merit += 19;
-            await user.save();
-        }
+        user.merit += 21;
+        await user.save();
+
         dare.lastDone = now;
 
         await user.save();
