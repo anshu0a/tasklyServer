@@ -92,6 +92,7 @@ const UserSchema = new mongoose.Schema({
       progress: { type: Number, default: 0 },
       streek: { type: Number, default: 0 },
       lastDone: { type: Date, default: () => new Date(Date.now() - 24 * 60 * 60 * 1000) },
+      lastAction: { type: Date, default: Date.now },
       by: { type: String, default: 'm' },
       allDares: [
         {

@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Dare = require("../models/Dare");
+const { isNewDay } = require("../help/isNewday.js");
 const { uploadMultipleImages, deleteImage } = require("../config/cloudnary.js");
 
 exports.addOneDare = async (req, res) => {
@@ -248,7 +249,6 @@ exports.oneDare = async (req, res) => {
         const dare = myUser.challenges.find(
             c => c.dare && c.dare._id.toString() === dareId
         );
-
         if (!dare) {
             return res.send({ error: true, found: false, msg: "Dare not found in user challenges" });
         }
@@ -256,12 +256,9 @@ exports.oneDare = async (req, res) => {
         const now = new Date();
         const last = dare.lastDone ? new Date(dare.lastDone) : null;
 
-        const isNewDay = !last ||
-            now.getFullYear() !== last.getFullYear() ||
-            now.getMonth() !== last.getMonth() ||
-            now.getDate() !== last.getDate();
 
-        if (isNewDay) {
+
+        if (isNewDay(last) && isNewDay(dare.lastAction)) {
             dare.allDares.forEach(d => d.isDone = false);
 
             if (last) {
@@ -433,11 +430,13 @@ exports.markDare = async (req, res) => {
 
         const challenge = user.challenges.find(c => c.dare.toString() === dareId);
 
+        challenge.lastAction = Date.now();
         // If allDares is missing, initialize it
         if (!challenge.allDares) {
             challenge.allDares = [];
-            await user.save();
         }
+
+        await user.save();
 
         // Update the specific task
         const task = challenge.allDares.id(oneId);
